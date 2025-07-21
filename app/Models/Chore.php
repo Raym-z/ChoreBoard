@@ -9,6 +9,15 @@ class Chore extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'description',
+        'points',
+        'frequency',
+        'priority',
+        'created_by',
+    ];
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

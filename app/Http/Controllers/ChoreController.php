@@ -41,6 +41,11 @@ class ChoreController extends Controller
 
     public function store(StoreChoreRequest $request)
     {
+        // Default due_date to today at 23:59 if not provided
+        $dueDate = $request->due_date;
+        if (empty($dueDate)) {
+            $dueDate = now()->setTime(23, 59, 0)->toDateString();
+        }
         $chore = Chore::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -55,8 +60,8 @@ class ChoreController extends Controller
             UserChore::create([
                 'chore_id' => $chore->id,
                 'user_id' => $userId,
-                'due_date' => $request->due_date,
-                'next_due_date' => $request->due_date,
+                'due_date' => $dueDate,
+                'next_due_date' => $dueDate,
                 'is_recurring' => $request->frequency !== 'one-time',
                 'status' => 'pending',
             ]);

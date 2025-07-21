@@ -183,6 +183,28 @@
         text-overflow: ellipsis !important;
     }
 
+    /* Uniform badge widths for Frequency and Priority */
+    .badge-frequency {
+        display: inline-block;
+        width: 90px;
+        min-width: 90px;
+        max-width: 90px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .badge-priority {
+        display: inline-block;
+        width: 70px;
+        min-width: 70px;
+        max-width: 70px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     .text-truncate {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -237,9 +259,6 @@
     </nav>
     <main>
         <div class="container mt-3">
-            @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
             @if(session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
@@ -247,6 +266,7 @@
         @yield('content')
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
 </body>
 
 </html>
