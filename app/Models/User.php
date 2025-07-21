@@ -45,4 +45,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function userChores()
+    {
+        return $this->hasMany(UserChore::class);
+    }
+
+    public function households()
+    {
+        return $this->belongsToMany(Household::class);
+    }
+
+    public function createdChores()
+    {
+        return $this->hasMany(Chore::class, 'created_by');
+    }
 }
