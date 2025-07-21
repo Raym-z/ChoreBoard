@@ -27,6 +27,7 @@
                 <option value="one-time" {{ old('frequency') == 'one-time' ? 'selected' : '' }}>One-time</option>
                 <option value="daily" {{ old('frequency') == 'daily' ? 'selected' : '' }}>Daily</option>
                 <option value="weekly" {{ old('frequency') == 'weekly' ? 'selected' : '' }}>Weekly</option>
+                <option value="monthly" {{ old('frequency') == 'monthly' ? 'selected' : '' }}>Monthly</option>
             </select>
             @error('frequency') <div class="text-danger small">{{ $message }}</div> @enderror
         </div>

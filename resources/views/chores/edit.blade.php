@@ -33,6 +33,8 @@
                 </option>
                 <option value="weekly" {{ old('frequency', $chore->frequency) == 'weekly' ? 'selected' : '' }}>Weekly
                 </option>
+                <option value="monthly" {{ old('frequency', $chore->frequency) == 'monthly' ? 'selected' : '' }}>Monthly
+                </option>
             </select>
             @error('frequency') <div class="text-danger small">{{ $message }}</div> @enderror
         </div>

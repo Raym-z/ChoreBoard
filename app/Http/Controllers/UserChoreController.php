@@ -30,9 +30,7 @@ class UserChoreController extends Controller
             abort(403, 'Unauthorized');
         }
         if ($request->status === 'completed' && $userChore->status !== 'completed') {
-            $userChore->status = 'completed';
-            $userChore->completed_at = now();
-            $userChore->save();
+            $userChore->markAsCompleted();
         }
         return redirect()->back()->with('success', 'Chore marked as complete!');
     }

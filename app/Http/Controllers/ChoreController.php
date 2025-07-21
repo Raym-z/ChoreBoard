@@ -14,15 +14,22 @@ class ChoreController extends Controller
 {
     public function __construct()
     {
-          /**
-            * @method void middleware($middleware, array $options = [])
-            */
         $this->middleware('admin');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $chores = Chore::with('creator')->latest()->paginate(10);
+        $query = Chore::with('creator');
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+        
+        $chores = $query->latest()->paginate(10)->withQueryString();
         return view('chores.index', compact('chores'));
     }
 
@@ -49,6 +56,8 @@ class ChoreController extends Controller
                 'chore_id' => $chore->id,
                 'user_id' => $userId,
                 'due_date' => $request->due_date,
+                'next_due_date' => $request->due_date,
+                'is_recurring' => $request->frequency !== 'one-time',
                 'status' => 'pending',
             ]);
         }

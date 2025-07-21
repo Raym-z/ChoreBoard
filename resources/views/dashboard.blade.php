@@ -57,7 +57,12 @@
                                         <span class="badge bg-light text-dark border me-2"
                                             style="font-size: 0.85em; font-weight: normal;">{{ $userChore->due_label ?? '' }}</span>
                                         @endif
-                                        <span>{{ $userChore->chore->name ?? 'Chore' }}</span>
+                                        <span>
+                                            {{ $userChore->chore->name ?? 'Chore' }}
+                                            @if($userChore->is_recurring && $userChore->chore->frequency !== 'one-time')
+                                            <i class="fas fa-redo-alt text-muted ms-1" title="Recurring chore"></i>
+                                            @endif
+                                        </span>
                                     </div>
                                     <div class="ms-2 d-flex align-items-center">
                                         @if($userChore->status === 'pending' || ($userChore->overdue ?? false) ||
