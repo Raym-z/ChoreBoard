@@ -13,6 +13,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('user-chores', App\Http\Controllers\UserChoreController::class)->only(['update']);
     Route::resource('chores', App\Http\Controllers\ChoreController::class);
+    Route::get('/household/invite', [App\Http\Controllers\InvitationController::class, 'showInvite'])->name('invitations.showInvite');
+    Route::get('/join/{code?}', [App\Http\Controllers\InvitationController::class, 'joinForm'])->name('invitations.joinForm');
+    Route::post('/join', [App\Http\Controllers\InvitationController::class, 'join'])->name('invitations.join');
+    Route::post('/household/invite', [App\Http\Controllers\InvitationController::class, 'sendInvite'])->name('invitations.sendInvite');
+    Route::delete('/invitations/{id}/revoke', [App\Http\Controllers\InvitationController::class, 'revoke'])->name('invitations.revoke');
 });
 
 require __DIR__.'/auth.php';

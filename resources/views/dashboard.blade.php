@@ -17,21 +17,31 @@
     <div class="row">
         <div class="col-md-8 mb-4">
             <div class="card mb-4">
-                <div class="card-header d-flex flex-column flex-md-row align-items-md-center justify-content-between">
-                    <div class="d-flex align-items-center mb-2 mb-md-0">
-                        <a href="?period={{ $period }}&date={{ $prevDate }}"
-                            class="btn btn-outline-secondary btn-sm me-2" style="border-radius:0;">&lt;</a>
-                        <a href="?period=today" class="btn btn-outline-primary btn-sm {{ $isToday ? 'active' : '' }}"
-                            style="border-radius:0;">Today</a>
-                        <a href="?period=week" class="btn btn-outline-primary btn-sm {{ $isThisWeek ? 'active' : '' }}"
-                            style="border-radius:0;">This Week</a>
-                        <a href="?period=month"
-                            class="btn btn-outline-primary btn-sm {{ $isThisMonth ? 'active' : '' }}"
-                            style="border-radius:0;">This Month</a>
-                        <a href="?period={{ $period }}&date={{ $nextDate }}"
-                            class="btn btn-outline-secondary btn-sm ms-2" style="border-radius:0;">&gt;</a>
+                <div class="card-header d-flex flex-column flex-md-row align-items-md-center justify-content-between bg-light border-0"
+                    style="min-height: 56px;">
+                    <div class="d-flex align-items-center mb-2 mb-md-0 gap-2">
+                        <div class="d-flex align-items-center">
+                            <a href="?period={{ $period }}&date={{ $prevDate }}"
+                                class="btn btn-outline-secondary btn-sm px-2 py-1 me-1"
+                                style="border-radius: 0.375rem 0 0 0.375rem; font-size: 1rem;">&lt;</a>
+                            <div class="btn-group" role="group" aria-label="Period filter">
+                                <a href="?period=today"
+                                    class="btn btn-outline-primary btn-sm px-3 py-1 {{ $isToday ? 'active' : '' }}"
+                                    style="border-radius: 0; font-size: 1rem;">Today</a>
+                                <a href="?period=week"
+                                    class="btn btn-outline-primary btn-sm px-3 py-1 {{ $isThisWeek ? 'active' : '' }}"
+                                    style="border-radius: 0; font-size: 1rem;">This Week</a>
+                                <a href="?period=month"
+                                    class="btn btn-outline-primary btn-sm px-3 py-1 {{ $isThisMonth ? 'active' : '' }}"
+                                    style="border-radius: 0; font-size: 1rem;">This Month</a>
+                            </div>
+                            <a href="?period={{ $period }}&date={{ $nextDate }}"
+                                class="btn btn-outline-secondary btn-sm px-2 py-1 ms-1"
+                                style="border-radius: 0 0.375rem 0.375rem 0; font-size: 1rem;">&gt;</a>
+                        </div>
                     </div>
-                    <div>
+                    <div class="text-end flex-grow-1 d-flex align-items-center justify-content-end"
+                        style="min-height: 40px;">
                         @if($period == 'today') Your Chores for {{ $baseDate->toFormattedDateString() }}
                         @elseif($period == 'week') Your Chores for the Week of
                         {{ $baseDate->startOfWeek()->toFormattedDateString() }}
@@ -132,7 +142,7 @@
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card h-100 d-flex flex-column justify-content-between">
                 <div class="card-header">Leaderboard</div>
                 <div class="card-body">
                     @if($leaderboard->count())
