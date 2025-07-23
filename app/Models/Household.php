@@ -9,9 +9,24 @@ class Household extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+    ];
+
+    protected static function booted()
+    {
+        static::creating(function ($household) {
+            if (empty($household->invite_code)) {
+                $household->invite_code = strtoupper(
+                    substr(str_shuffle('ABCDEFGHJKLMNPQRSTUVWXYZ23456789'), 0, 8)
+                );
+            }
+        });
+    }
+
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withPivot('role');
     }
 
     public function invitations()

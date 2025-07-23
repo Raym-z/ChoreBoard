@@ -53,23 +53,39 @@ class InvitationController extends Controller
     // Process join by code (mark invitation as accepted if exists)
     public function join(Request $request)
     {
-        $request->validate(['code' => 'required|string|exists:households,invite_code']);
-        $household = Household::where('invite_code', $request->code)->firstOrFail();
+        $request->validate(['code' => 'required|string']);
         $user = Auth::user();
+        // Try household invite_code first
+        $household = \App\Models\Household::where('invite_code', $request->code)->first();
+        if (!$household) {
+            // Try invitation code
+            $invite = \App\Models\Invitation::where('code', $request->code)->where('status', 'pending')->first();
+            if ($invite) {
+                $household = $invite->household;
+            } else {
+                return back()->withErrors(['code' => 'The selected code is invalid.']);
+            }
+        }
         // Attach user to household if not already a member
         if (!$user->households->contains($household->id)) {
-            $user->households()->attach($household->id);
+            $user->households()->attach($household->id, ['role' => 'member']);
         }
-        // Mark invitation as accepted if exists for this email/household/code
-        $invite = Invitation::where('household_id', $household->id)
-            ->where('code', $request->code)
-            ->where('email', $user->email)
-            ->where('status', 'pending')
-            ->first();
-        if ($invite) {
+        // Mark invitation as accepted if exists for this user/household/code
+        if (isset($invite) && $invite) {
             $invite->status = 'accepted';
             $invite->accepted_at = now();
             $invite->save();
+        } else {
+            // Also check for any pending invite for this user/household
+            $pendingInvite = \App\Models\Invitation::where('household_id', $household->id)
+                ->where('email', $user->email)
+                ->where('status', 'pending')
+                ->first();
+            if ($pendingInvite) {
+                $pendingInvite->status = 'accepted';
+                $pendingInvite->accepted_at = now();
+                $pendingInvite->save();
+            }
         }
         return redirect()->route('dashboard')->with('success', 'You have joined the household!');
     }

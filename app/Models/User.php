@@ -54,7 +54,7 @@ class User extends Authenticatable
 
     public function households()
     {
-        return $this->belongsToMany(Household::class);
+        return $this->belongsToMany(Household::class)->withPivot('role');
     }
 
     public function createdChores()

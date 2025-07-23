@@ -38,6 +38,15 @@ class UsersTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'name' => 'Raymond W T',
+                'email' => 'stepahead678@gmail.com',
+                'password' => bcrypt('password'),
+                'role' => 'member',
+                'remember_token' => Str::random(10),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

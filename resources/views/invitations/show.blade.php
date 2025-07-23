@@ -8,15 +8,18 @@
             <div class="mb-3">
                 <label class="form-label">Invite Code</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="inviteCode" value="{{ $household->invite_code }}" readonly>
-                    <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText('{{ $household->invite_code }}')">Copy</button>
+                    <input type="text" class="form-control" id="inviteCode" value="{{ $household->invite_code }}"
+                        readonly>
+                    <button class="btn btn-outline-secondary" type="button"
+                        onclick="navigator.clipboard.writeText('{{ $household->invite_code }}')">Copy</button>
                 </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Invite Link</label>
                 <div class="input-group">
                     <input type="text" class="form-control" id="inviteLink" value="{{ $inviteLink }}" readonly>
-                    <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText('{{ $inviteLink }}')">Copy</button>
+                    <button class="btn btn-outline-secondary" type="button"
+                        onclick="navigator.clipboard.writeText('{{ $inviteLink }}')">Copy</button>
                 </div>
             </div>
             <form method="POST" action="{{ route('invitations.sendInvite') }}" class="row g-2 align-items-end">
@@ -30,16 +33,16 @@
                 </div>
             </form>
             @if(session('success'))
-                <div class="alert alert-success mt-3">{{ session('success') }}</div>
+            <div class="alert alert-success mt-3">{{ session('success') }}</div>
             @endif
             @if($errors->any())
-                <div class="alert alert-danger mt-3">
-                    <ul class="mb-0">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+            <div class="alert alert-danger mt-3">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
             @endif
         </div>
     </div>
@@ -64,4 +67,4 @@
     </div>
     @endif
 </div>
-@endsection 
+@endsection

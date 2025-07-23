@@ -16,10 +16,18 @@ class AdminOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        if (!Auth::check()) {
             abort(403, 'Access denied. Admin privileges required.');
         }
-
+        $user = Auth::user();
+        $householdId = session('current_household_id');
+        if (!$householdId) {
+            abort(403, 'No household context.');
+        }
+        $pivot = $user->households()->where('household_id', $householdId)->first()?->pivot;
+        if (!$pivot || $pivot->role !== 'admin') {
+            abort(403, 'Access denied. Admin privileges required.');
+        }
         return $next($request);
     }
 }

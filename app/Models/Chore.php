@@ -27,4 +27,9 @@ class Chore extends Model
     {
         return $this->hasMany(UserChore::class);
     }
+
+    public function household()
+    {
+        return $this->belongsTo(Household::class, 'created_by', 'id');
+    }
 }

@@ -77,6 +77,7 @@
                             <th class="col-frequency">Frequency</th>
                             <th class="col-priority">Priority</th>
                             <th class="col-created-by">Created By</th>
+                            <th style="min-width: 120px; max-width: 180px;">Household</th>
                             <th class="col-actions">Actions</th>
                         </tr>
                     </thead>
@@ -114,6 +115,11 @@
                             <td class="col-created-by">
                                 <div class="text-truncate" title="{{ $chore->creator->name ?? 'N/A' }}">
                                     {{ $chore->creator->name ?? 'N/A' }}
+                                </div>
+                            </td>
+                            <td style="min-width: 120px; max-width: 180px;">
+                                <div class="text-truncate" title="{{ $chore->household->name ?? 'N/A' }}">
+                                    {{ $chore->household->name ?? 'N/A' }}
                                 </div>
                             </td>
                             <td class="col-actions">
