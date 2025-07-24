@@ -32,6 +32,12 @@ $currentHousehold = $households->firstWhere('id', $currentHouseholdId);
                     <span class="badge bg-info text-dark">Rank: {{ Auth::user()->rank }}</span>
                     <span class="badge bg-warning text-dark">{{ Auth::user()->streak_label }}</span>
                 </div>
+                <div class="mb-2">
+                    <span class="badge bg-secondary">Daily Challenge: {{ Auth::user()->daily_challenge_progress }}
+                        {{ Auth::user()->daily_challenge_completed ? '✅' : '' }}</span>
+                    <span class="badge bg-secondary">Weekly Challenge: {{ Auth::user()->weekly_challenge_progress }}
+                        {{ Auth::user()->weekly_challenge_completed ? '✅' : '' }}</span>
+                </div>
                 <div class="mb-3" style="max-width: 350px;">
                     @php
                     $xpThresholds = [1 => 0, 2 => 100, 3 => 500, 4 => 1000, 5 => 2000];

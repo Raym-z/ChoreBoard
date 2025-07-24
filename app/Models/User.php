@@ -124,4 +124,42 @@ class User extends Authenticatable
         $hash = md5(strtolower(trim($this->email)));
         return "https://www.gravatar.com/avatar/{$hash}?s=64&d=identicon";
     }
+
+    public function checkDailyChallenge()
+    {
+        // Example: complete 3 chores today
+        $completedToday = $this->userChores()->whereDate('completed_at', now()->toDateString())->count();
+        if (!$this->daily_challenge_completed && $completedToday >= 3) {
+            $this->daily_challenge_completed = true;
+            $this->challenge_xp_bonus += 25; // bonus XP
+            $this->xp += 25;
+            $this->save();
+            session()->flash('level_up', 'Daily Challenge Complete! +25 XP');
+        }
+    }
+
+    public function checkWeeklyChallenge()
+    {
+        // Example: complete 10 chores this week
+        $completedThisWeek = $this->userChores()->whereBetween('completed_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        if (!$this->weekly_challenge_completed && $completedThisWeek >= 10) {
+            $this->weekly_challenge_completed = true;
+            $this->challenge_xp_bonus += 100; // bonus XP
+            $this->xp += 100;
+            $this->save();
+            session()->flash('level_up', 'Weekly Challenge Complete! +100 XP');
+        }
+    }
+
+    public function getDailyChallengeProgressAttribute()
+    {
+        $completedToday = $this->userChores()->whereDate('completed_at', now()->toDateString())->count();
+        return min($completedToday, 3) . '/3';
+    }
+
+    public function getWeeklyChallengeProgressAttribute()
+    {
+        $completedThisWeek = $this->userChores()->whereBetween('completed_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        return min($completedThisWeek, 10) . '/10';
+    }
 }

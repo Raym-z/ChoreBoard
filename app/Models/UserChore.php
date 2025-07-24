@@ -72,6 +72,8 @@ class UserChore extends Model
         $user->save();
         $user->checkLevelUp();
         $user->updateStreaks();
+        $user->checkDailyChallenge();
+        $user->checkWeeklyChallenge();
     }
 
     /**
