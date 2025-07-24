@@ -45,7 +45,14 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Chores</h2>
-        <a href="{{ route('chores.create') }}" class="btn btn-success">Create Chore</a>
+        <div class="d-flex flex-column align-items-end">
+            <div>
+                <span class="badge bg-primary">XP: {{ Auth::user()->xp }}</span>
+                <span class="badge bg-success">Level: {{ Auth::user()->level }}</span>
+                <span class="badge bg-info text-dark">Rank: {{ Auth::user()->rank }}</span>
+            </div>
+            <a href="{{ route('chores.create') }}" class="btn btn-success mt-2">Create Chore</a>
+        </div>
     </div>
 
     <div class="card mb-3">
@@ -103,6 +110,9 @@
                                     {{ ucfirst($chore->frequency) }}
                                     @if($chore->frequency !== 'one-time')
                                     <i class="fas fa-redo-alt ms-1" title="Recurring"></i>
+                                    @endif
+                                    @if(isset($chore->userChores) && $chore->userChores->first() && $chore->userChores->first()->bonus_multiplier > 1)
+                                    <span class="badge bg-warning text-dark ms-1">Bonus! x{{ $chore->userChores->first()->bonus_multiplier }}</span>
                                     @endif
                                 </span>
                             </td>

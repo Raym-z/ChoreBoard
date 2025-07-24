@@ -124,8 +124,13 @@ class DashboardController extends Controller
                         return $uc->chore->points ?? 0;
                     });
                 return [
+                    'id' => $user->id,
                     'name' => $user->name,
                     'points' => $points,
+                    'level' => $user->level ?? 1,
+                    'xp' => $user->xp ?? 0,
+                    'rank' => $user->rank ?? '',
+                    'avatar_url' => $user->avatar_url ?? '',
                 ];
             })
             ->sortByDesc('points')

@@ -59,27 +59,19 @@ class UserChore extends Model
     /**
      * Mark as completed and schedule next occurrence if recurring
      */
-    public function markAsCompleted(): void
+    public function markAsCompleted()
     {
-        $this->update([
-            'status' => 'completed',
-            'completed_at' => now(),
-        ]);
+        $this->status = 'completed';
+        $this->completed_at = now();
+        $this->save();
 
-        if ($this->is_recurring && $this->chore->frequency !== 'one-time') {
-            $nextDueDate = $this->calculateNextDueDate();
-            if ($nextDueDate) {
-                // Create next occurrence
-                self::create([
-                    'chore_id' => $this->chore_id,
-                    'user_id' => $this->user_id,
-                    'due_date' => $nextDueDate,
-                    'next_due_date' => $nextDueDate,
-                    'is_recurring' => true,
-                    'status' => 'pending',
-                ]);
-            }
-        }
+        // Award XP to user
+        $user = $this->user;
+        $xpEarned = $this->chore->points * $this->bonus_multiplier;
+        $user->xp += $xpEarned;
+        $user->save();
+        $user->checkLevelUp();
+        $user->updateStreaks();
     }
 
     /**

@@ -8,6 +8,12 @@ $currentHouseholdId = session('current_household_id', $households->first()?->id)
 $currentHousehold = $households->firstWhere('id', $currentHouseholdId);
 @endphp
 <div class="container py-4">
+    @if(session('level_up'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Level Up!</strong> {{ session('level_up') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
     <div class="row mb-4">
         <div class="col-12 d-flex justify-content-between align-items-center">
             <div>
@@ -19,6 +25,31 @@ $currentHousehold = $households->firstWhere('id', $currentHouseholdId);
                     <span class="badge bg-info text-dark">{{ $currentHousehold?->name ?? 'None' }}</span>
                     <a href="{{ route('household.manage') }}" class="btn btn-sm btn-outline-primary ms-2">Switch
                         Household</a>
+                </div>
+                <div class="mb-2">
+                    <span class="badge bg-primary">XP: {{ Auth::user()->xp }}</span>
+                    <span class="badge bg-success">Level: {{ Auth::user()->level }}</span>
+                    <span class="badge bg-info text-dark">Rank: {{ Auth::user()->rank }}</span>
+                    <span class="badge bg-warning text-dark">{{ Auth::user()->streak_label }}</span>
+                </div>
+                <div class="mb-3" style="max-width: 350px;">
+                    @php
+                    $xpThresholds = [1 => 0, 2 => 100, 3 => 500, 4 => 1000, 5 => 2000];
+                    $currentLevel = Auth::user()->level;
+                    $currentXp = Auth::user()->xp;
+                    $nextLevel = $currentLevel + 1;
+                    $nextXp = $xpThresholds[$nextLevel] ?? ($currentXp + 100);
+                    $prevXp = $xpThresholds[$currentLevel] ?? 0;
+                    $progressToNext = $nextXp > $prevXp ? round((($currentXp - $prevXp) / ($nextXp - $prevXp)) * 100) :
+                    100;
+                    @endphp
+                    <div class="progress" style="height: 18px;">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ $progressToNext }}%;"
+                            aria-valuenow="{{ $progressToNext }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ $progressToNext }}%
+                        </div>
+                    </div>
+                    <small>Progress to next level ({{ $nextXp - $currentXp }} XP to Level {{ $nextLevel }})</small>
                 </div>
             </div>
             @if($isAdmin)
@@ -83,6 +114,10 @@ $currentHousehold = $households->firstWhere('id', $currentHouseholdId);
                                             {{ $userChore->chore->name ?? 'Chore' }}
                                             @if($userChore->is_recurring && $userChore->chore->frequency !== 'one-time')
                                             <i class="fas fa-redo-alt text-muted ms-1" title="Recurring chore"></i>
+                                            @endif
+                                            @if($userChore->bonus_multiplier > 1)
+                                            <span class="badge bg-warning text-dark ms-1">Bonus!
+                                                x{{ $userChore->bonus_multiplier }}</span>
                                             @endif
                                         </span>
                                     </div>
@@ -160,9 +195,20 @@ $currentHousehold = $households->firstWhere('id', $currentHouseholdId);
                     @if($leaderboard->count())
                     <ol class="list-group list-group-numbered">
                         @foreach($leaderboard as $entry)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ $entry['name'] }}
-                            <span class="badge bg-primary">{{ $entry['points'] }} pts</span>
+                        @php $isCurrentUser = isset($entry['id']) && $entry['id'] == Auth::id(); @endphp
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center{{ $isCurrentUser ? ' bg-light border-primary' : '' }}">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ $entry['avatar_url'] ?? 'https://www.gravatar.com/avatar/?d=mp' }}"
+                                    alt="avatar" class="rounded-circle me-2" width="32" height="32">
+                                <span class="fw-bold">{{ $entry['name'] }}</span>
+                                <span class="badge bg-success ms-2">Level {{ $entry['level'] ?? '-' }}</span>
+                                <span class="badge bg-info text-dark ms-1">{{ $entry['rank'] ?? '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="badge bg-primary">{{ $entry['points'] }} pts</span>
+                                <span class="badge bg-secondary ms-1">{{ $entry['xp'] ?? 0 }} XP</span>
+                            </div>
                         </li>
                         @endforeach
                     </ol>

@@ -2,6 +2,11 @@
 
 @section('content')
 <div class="container py-4">
+    <div class="mb-3">
+        <span class="badge bg-primary">XP: {{ Auth::user()->xp }}</span>
+        <span class="badge bg-success">Level: {{ Auth::user()->level }}</span>
+        <span class="badge bg-info text-dark">Rank: {{ Auth::user()->rank }}</span>
+    </div>
     <h2>My Households</h2>
     @php
     $user = Auth::user();
