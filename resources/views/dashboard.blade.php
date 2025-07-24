@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+$user = Auth::user();
+$households = $user->households;
+$currentHouseholdId = session('current_household_id', $households->first()?->id);
+$currentHousehold = $households->firstWhere('id', $currentHouseholdId);
+@endphp
 <div class="container py-4">
     <div class="row mb-4">
         <div class="col-12 d-flex justify-content-between align-items-center">
@@ -8,6 +14,12 @@
                 <h1 class="mb-3">Welcome to ChoreBoard!</h1>
                 <p class="lead">Track, assign, and complete household chores. Compete for the top spot on the
                     leaderboard!</p>
+                <div class="mb-2">
+                    <span class="fw-bold">Active Household:</span>
+                    <span class="badge bg-info text-dark">{{ $currentHousehold?->name ?? 'None' }}</span>
+                    <a href="{{ route('household.manage') }}" class="btn btn-sm btn-outline-primary ms-2">Switch
+                        Household</a>
+                </div>
             </div>
             @if($isAdmin)
             <a href="{{ route('chores.index') }}" class="btn btn-primary">Manage Chores</a>

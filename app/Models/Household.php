@@ -34,9 +34,8 @@ class Household extends Model
         return $this->hasMany(Invitation::class);
     }
 
-    // If chores are linked to households in the future:
-    // public function chores()
-    // {
-    //     return $this->hasMany(Chore::class);
-    // }
+    public function chores()
+    {
+        return $this->hasMany(Chore::class);
+    }
 }

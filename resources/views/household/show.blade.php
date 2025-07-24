@@ -45,31 +45,28 @@
             <h5 class="card-title mb-3">{{ $currentHousehold->name }}</h5>
             <div class="mb-2">
                 <strong>Members:</strong>
-                <ul class="list-inline mb-0">
-                    @foreach($members as $member)
-                    <li class="list-inline-item">
-                        {{ $member->name }} <span class="text-muted">({{ $member->email }})</span>
-                        @php $role = $member->pivot->role ?? 'member'; @endphp
-                        <span
-                            class="badge bg-{{ $role === 'admin' ? 'primary' : 'secondary' }} ms-1">{{ ucfirst($role) }}</span>
-                        @if($user->households->find($currentHouseholdId)?->pivot->role === 'admin' && $member->id !==
-                        $user->id)
-                        @if($role === 'member')
-                        <form method="POST" action="{{ route('household.promote', $member->id) }}"
-                            class="d-inline ms-1">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-outline-success">Promote</button>
-                        </form>
-                        @elseif($role === 'admin')
-                        <form method="POST" action="{{ route('household.demote', $member->id) }}" class="d-inline ms-1">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-outline-warning">Demote</button>
-                        </form>
-                        @endif
-                        @endif
-                    </li>
-                    @endforeach
-                </ul>
+                @foreach($members as $member)
+                <div class="mb-2">
+                    {{ $member->name }} <span class="text-muted">({{ $member->email }})</span>
+                    @php $role = $member->pivot->role ?? 'member'; @endphp
+                    <span
+                        class="badge bg-{{ $role === 'admin' ? 'primary' : 'secondary' }} ms-1">{{ ucfirst($role) }}</span>
+                    @if($user->households->find($currentHouseholdId)?->pivot->role === 'admin' && $member->id !==
+                    $user->id)
+                    @if($role === 'member')
+                    <form method="POST" action="{{ route('household.promote', $member->id) }}" class="d-inline ms-1">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-success">Promote</button>
+                    </form>
+                    @elseif($role === 'admin')
+                    <form method="POST" action="{{ route('household.demote', $member->id) }}" class="d-inline ms-1">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-warning">Demote</button>
+                    </form>
+                    @endif
+                    @endif
+                </div>
+                @endforeach
             </div>
             <a href="{{ route('invitations.showInvite') }}" class="btn btn-primary">Invite Users</a>
         </div>

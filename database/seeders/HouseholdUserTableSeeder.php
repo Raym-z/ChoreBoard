@@ -20,18 +20,21 @@ class HouseholdUserTableSeeder extends Seeder
             [
                 'user_id' => $aliceId,
                 'household_id' => $smithFamilyId,
+                'role' => 'admin',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'user_id' => $bobId,
                 'household_id' => $smithFamilyId,
+                'role' => 'member',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'user_id' => $carolId,
                 'household_id' => $room101Id,
+                'role' => 'admin',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

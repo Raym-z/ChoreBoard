@@ -16,6 +16,7 @@ class Chore extends Model
         'frequency',
         'priority',
         'created_by',
+        'household_id',
     ];
 
     public function creator()
@@ -30,6 +31,6 @@ class Chore extends Model
 
     public function household()
     {
-        return $this->belongsTo(Household::class, 'created_by', 'id');
+        return $this->belongsTo(Household::class);
     }
 }

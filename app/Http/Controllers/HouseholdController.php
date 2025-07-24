@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\Invitation;
 
 class HouseholdController extends Controller
@@ -11,11 +12,12 @@ class HouseholdController extends Controller
     public function show()
     {
         $user = Auth::user();
-        $household = $user->households()->first();
-        $members = $household ? $household->users : collect();
+        $household = $user->households()->find(session('current_household_id')) ?? $user->households()->first();
+        $members = $household ? $household->users()->get() : collect();
         $pendingInvitations = $household ? $household->invitations()->where('status', 'pending')->get() : collect();
         // Incoming invites for this user (by email)
-        $incomingInvites = Invitation::where('email', $user->email)->where('status', 'pending')->get();
+        $incomingInvites = \App\Models\Invitation::where('email', $user->email)->where('status', 'pending')->get();
+        Log::info('HouseholdController@show: members', $members->map(fn($m) => [$m->id, $m->name, $m->pivot->role])->toArray());
         return view('household.show', compact('household', 'members', 'pendingInvitations', 'incomingInvites'));
     }
 
@@ -81,6 +83,9 @@ class HouseholdController extends Controller
         }
         $target = \App\Models\User::findOrFail($userId);
         $target->households()->updateExistingPivot($householdId, ['role' => 'admin']);
+        Log::info('Promoted user to admin', ['user_id' => $userId, 'household_id' => $householdId]);
+        $updatedRole = $target->households()->where('household_id', $householdId)->first()?->pivot->role;
+        Log::info('Updated role after promote', ['user_id' => $userId, 'role' => $updatedRole]);
         return back()->with('success', 'User promoted to admin.');
     }
 
@@ -102,6 +107,9 @@ class HouseholdController extends Controller
             return back()->with('error', 'You cannot demote yourself as the only admin.');
         }
         $target->households()->updateExistingPivot($householdId, ['role' => 'member']);
+        Log::info('Demoted user to member', ['user_id' => $userId, 'household_id' => $householdId]);
+        $updatedRole = $target->households()->where('household_id', $householdId)->first()?->pivot->role;
+        Log::info('Updated role after demote', ['user_id' => $userId, 'role' => $updatedRole]);
         return back()->with('success', 'User demoted to member.');
     }
 }

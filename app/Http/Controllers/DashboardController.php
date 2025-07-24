@@ -13,13 +13,18 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
+        $households = $user->households;
+        $currentHouseholdId = session('current_household_id', $households->first()?->id);
         $period = $request->query('period', 'today'); // today, week, month
         $date = $request->query('date');
         $baseDate = $date ? Carbon::parse($date) : Carbon::today();
 
-        // Overdue: due before today, not completed
+        // Overdue: due before today, not completed, and in current household
         $overdueChores = UserChore::with('chore')
             ->where('user_id', $user->id)
+            ->whereHas('chore', function($q) use ($currentHouseholdId) {
+                $q->where('household_id', $currentHouseholdId);
+            })
             ->where('status', 'pending')
             ->whereDate('due_date', '<', Carbon::today())
             ->get();
@@ -39,9 +44,12 @@ class DashboardController extends Controller
             $end = $baseDate->copy();
         }
 
-        // Chores for the selected period
+        // Chores for the selected period, filtered by household
         $chores = UserChore::with('chore')
             ->where('user_id', $user->id)
+            ->whereHas('chore', function($q) use ($currentHouseholdId) {
+                $q->where('household_id', $currentHouseholdId);
+            })
             ->whereBetween('due_date', [$start, $end])
             ->get();
         foreach ($chores as $uc) {
@@ -93,6 +101,9 @@ class DashboardController extends Controller
         $endOfWeek = Carbon::now()->endOfWeek();
         $choresThisWeek = UserChore::with('chore')
             ->where('user_id', $user->id)
+            ->whereHas('chore', function($q) use ($currentHouseholdId) {
+                $q->where('household_id', $currentHouseholdId);
+            })
             ->whereBetween('due_date', [$startOfWeek, $endOfWeek])
             ->get();
         $completedThisWeek = $choresThisWeek->where('status', 'completed')->count();

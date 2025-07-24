@@ -19,7 +19,9 @@ class ChoreController extends Controller
 
     public function index(Request $request)
     {
-        $query = Chore::with('creator');
+        $user = Auth::user();
+        $householdId = session('current_household_id');
+        $query = Chore::with('creator')->where('household_id', $householdId);
         
         if ($request->filled('search')) {
             $search = $request->search;
@@ -35,29 +37,31 @@ class ChoreController extends Controller
 
     public function create()
     {
-        $users = User::all();
+        $users = \App\Models\User::all();
         return view('chores.create', compact('users'));
     }
 
-    public function store(StoreChoreRequest $request)
+    public function store(\App\Http\Requests\StoreChoreRequest $request)
     {
+        $householdId = session('current_household_id');
         // Default due_date to today at 23:59 if not provided
         $dueDate = $request->due_date;
         if (empty($dueDate)) {
             $dueDate = now()->setTime(23, 59, 0)->toDateString();
         }
-        $chore = Chore::create([
+        $chore = \App\Models\Chore::create([
             'name' => $request->name,
             'description' => $request->description,
             'points' => $request->points,
             'frequency' => $request->frequency,
             'priority' => $request->priority,
             'created_by' => Auth::id(),
+            'household_id' => $householdId,
         ]);
 
         // Assign to users
         foreach ($request->assigned_users as $userId) {
-            UserChore::create([
+            \App\Models\UserChore::create([
                 'chore_id' => $chore->id,
                 'user_id' => $userId,
                 'due_date' => $dueDate,
